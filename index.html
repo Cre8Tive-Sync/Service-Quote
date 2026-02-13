@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Service Quote | Glass</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #000000 0%, #000000 25%, #111111 50%, #272727 75%, #171717 100%);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 
+                0 8px 32px 0 rgba(31, 38, 135, 0.2),
+                inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .glass-card:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 40px rgba(255, 255, 255, 0.1);
+        }
+
+        .glass-card.selected {
+            background: rgba(255, 255, 255, 0.35);
+            border-color: rgba(255, 255, 255, 0.6);
+            box-shadow: 
+                0 0 20px rgba(255, 255, 255, 0.3),
+                inset 0 0 0 1px rgba(255, 255, 255, 0.4);
+        }
+
+        .glass-card.disabled {
+            opacity: 0.5;
+            pointer-events: none;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .custom-checkbox {
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.6);
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            cursor: pointer;
+            position: relative;
+            transition: all 0.2s ease;
+        }
+
+        .custom-checkbox:checked {
+            background: rgba(255, 255, 255, 0.9);
+            border-color: rgba(255, 255, 255, 0.9);
+        }
+
+        .custom-checkbox:checked::after {
+            content: '';
+            position: absolute;
+            left: 5px;
+            top: 2px;
+            width: 5px;
+            height: 10px;
+            border: solid #ffffff;
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg);
+        }
+
+        .custom-checkbox:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .total-glow {
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+        }
+
+        .floating-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(60px);
+            opacity: 0.6;
+            animation: float 20s infinite ease-in-out;
+            pointer-events: none;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(30px, -50px) scale(1.1); }
+            66% { transform: translate(-20px, 20px) scale(0.9); }
+        }
+
+        .price-tag {
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .service-item {
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .section-header {
+            background: rgba(255, 255, 255, 0.1);
+            border-left: 3px solid rgba(255, 255, 255, 0.6);
+        }
+
+        .bundle-badge {
+            background: linear-gradient(135deg, rgba(255,255,255,0.3), rgba(255,255,255,0.1));
+            font-size: 0.65rem;
+            letter-spacing: 0.05em;
+        }
+
+        .default-badge {
+            background: rgba(255, 215, 0, 0.3);
+            border: 1px solid rgba(255, 215, 0, 0.5);
+            color: #ffd700;
+            font-size: 0.6rem;
+        }
+
+        .savings-badge {
+            background: rgba(34, 197, 94, 0.3);
+            border: 1px solid rgba(34, 197, 94, 0.5);
+            color: #4ade80;
+            font-size: 0.65rem;
+        }
+
+        .divider-glass {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+        }
+
+        .compact-row {
+            padding: 0.75rem 1rem;
+        }
+
+        .scroll-container {
+            max-height: 60vh;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255,255,255,0.3) transparent;
+        }
+
+        .scroll-container::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .scroll-container::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .scroll-container::-webkit-scrollbar-thumb {
+            background-color: rgba(255,255,255,0.3);
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center p-4 relative">
+
+    <!-- Floating Background Orbs -->
+    <div class="floating-orb w-96 h-96 bg-purple-400 top-0 left-0"></div>
+    <div class="floating-orb w-80 h-80 bg-pink-400 bottom-0 right-0 animation-delay-2000"></div>
+    <div class="floating-orb w-64 h-64 bg-blue-400 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 animation-delay-4000"></div>
+
+    <!-- Main Glass Container -->
+    <main class="glass-panel rounded-3xl p-6 w-full max-w-lg relative z-10">
+        
+        <!-- Header -->
+        <header class="mb-4 text-center">
+            <h1 class="text-3xl font-bold text-white mb-1 tracking-tight">Service Quote</h1>
+            <p class="text-white/70 text-xs font-medium tracking-wide uppercase">Select services for your project</p>
+        </header>
+
+        <!-- Scrollable Services List -->
+        <div class="scroll-container space-y-4 mb-4 pr-2">
+            
+            <!-- Core Services -->
+            <div>
+                <div class="section-header px-3 py-2 rounded-r-lg mb-2">
+                    <h3 class="text-white/90 text-xs font-bold uppercase tracking-wider">Core Services</h3>
+                </div>
+                <div class="space-y-2" id="coreServices"></div>
+            </div>
+
+            <!-- Add-ons -->
+            <div>
+                <div class="section-header px-3 py-2 rounded-r-lg mb-2">
+                    <h3 class="text-white/90 text-xs font-bold uppercase tracking-wider">Add-ons & Features</h3>
+                </div>
+                <div class="space-y-2" id="addonServices"></div>
+            </div>
+
+            <!-- Bundles -->
+            <div>
+                <div class="section-header px-3 py-2 rounded-r-lg mb-2">
+                    <h3 class="text-white/90 text-xs font-bold uppercase tracking-wider">Bundles</h3>
+                </div>
+                <div class="space-y-2" id="bundleServices"></div>
+            </div>
+
+            <!-- Maintenance -->
+            <div>
+                <div class="section-header px-3 py-2 rounded-r-lg mb-2">
+                    <h3 class="text-white/90 text-xs font-bold uppercase tracking-wider">Monthly Maintenance (Optional)</h3>
+                </div>
+                <div class="space-y-2" id="maintenanceServices"></div>
+            </div>
+        </div>
+
+        <!-- Divider -->
+        <div class="divider-glass my-4"></div>
+
+        <!-- Selected Items Summary -->
+        <div id="selectedSummary" class="mb-4 hidden">
+            <h3 class="text-white/80 text-xs font-semibold uppercase tracking-wider mb-2">Selected Services</h3>
+            <div id="selectedItems" class="space-y-1 text-xs text-white/90 max-h-24 overflow-y-auto"></div>
+        </div>
+
+        <!-- Total Section -->
+        <div class="glass-card rounded-xl p-4 flex justify-between items-center">
+            <div>
+                <p class="text-white/60 text-xs font-medium uppercase tracking-wider">Total Estimate</p>
+                <p class="text-white/40 text-xs mt-0.5" id="itemCount">0 items selected</p>
+            </div>
+            <div class="text-right">
+                <span class="text-white/60 text-xl font-light">₱</span>
+                <span id="totalAmount" class="text-4xl font-bold text-white total-glow tracking-tight">0</span>
+            </div>
+        </div>
+
+        <!-- Action Button -->
+        <button onclick="generateInvoice()" class="w-full mt-4 bg-white/20 hover:bg-white/30 text-white font-semibold py-3 rounded-xl border border-white/30 transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] backdrop-blur-sm text-sm">
+            Generate Invoice
+        </button>
+
+    </main>
+
+    <script>
+        // Service definitions with categories and conflicts
+        const services = [
+            // Core Services
+            { id: 'web', name: "Web Development", price: 12000, category: 'core', description: "Base Price" },
+            { id: 'mobile', name: "Mobile Development", price: 15000, category: 'core', description: "Base Price" },
+            { id: 'manuscript', name: "Manuscript Writing", price: 4999, category: 'core', description: "Technical documentation" },
+            { id: 'consult', name: "Technical Consultations", price: 1999, category: 'core', description: "Expert guidance", default: true },
+            
+            // Add-ons
+            { id: 'data', name: "Data Analytics", price: 2500, category: 'addon', description: "Business intelligence" },
+            { id: 'ai', name: "Artificial Intelligence", price: 3999, category: 'addon', description: "ML & AI integration" },
+            { id: 'ar', name: "Augmented Reality", price: 4599, category: 'addon', description: "AR experiences" },
+            { id: 'vr', name: "Virtual Reality", price: 4599, category: 'addon', description: "VR development" },
+            { id: 'cv', name: "Computer Vision", price: 6500, category: 'addon', description: "Image recognition" },
+            
+            // Bundles
+            { id: 'master', name: "Master of Emerging Tech", price: 7599, category: 'bundle', description: "All emerging tech included", 
+              includes: ['data', 'ai', 'ar', 'vr', 'cv'], savings: "Save ₱14,598" },
+            { id: 'aipack', name: "AI Pack", price: 5999, category: 'bundle', description: "Data + AI + Vision", 
+              includes: ['data', 'ai', 'cv'], savings: "Save ₱7,000" },
+            { id: 'virtualpack', name: "Virtual Pack", price: 5999, category: 'bundle', description: "VR + AR combined", 
+              includes: ['vr', 'ar'], savings: "Save ₱3,199" },
+            
+            // Maintenance
+            { id: 'maint_backend', name: "Backend Maintenance", price: 2500, category: 'maintenance', description: "Monthly backend support" },
+            { id: 'maint_frontend', name: "Frontend Maintenance", price: 1000, category: 'maintenance', description: "Monthly frontend support" },
+            { id: 'maint_full', name: "Full Stack Maintenance", price: 3000, category: 'maintenance', description: "Complete maintenance", 
+              conflicts: ['maint_backend', 'maint_frontend'] }
+        ];
+
+        let selectedServices = new Set(['consult']); // Default selected
+
+        function renderServices() {
+            // Render each category
+            renderCategory('core', 'coreServices');
+            renderCategory('addon', 'addonServices');
+            renderCategory('bundle', 'bundleServices');
+            renderCategory('maintenance', 'maintenanceServices');
+        }
+
+        function renderCategory(category, containerId) {
+            const container = document.getElementById(containerId);
+            const categoryServices = services.filter(s => s.category === category);
+            
+            container.innerHTML = categoryServices.map(service => {
+                const isSelected = selectedServices.has(service.id);
+                const isDisabled = isServiceDisabled(service);
+                const isDefault = service.default;
+                
+                let badges = '';
+                if (isDefault) badges += `<span class="default-badge px-2 py-0.5 rounded text-xs font-bold mr-2">DEFAULT</span>`;
+                if (service.savings) badges += `<span class="savings-badge px-2 py-0.5 rounded text-xs font-bold mr-2">${service.savings}</span>`;
+                if (service.includes) badges += `<span class="bundle-badge px-2 py-0.5 rounded text-white text-xs mr-2">BUNDLE</span>`;
+
+                return `
+                    <div class="service-item glass-card rounded-lg compact-row flex items-center justify-between group ${isSelected ? 'selected' : ''} ${isDisabled ? 'disabled' : ''}" 
+                         onclick="${isDisabled ? '' : `toggleService('${service.id}')`}">
+                        <div class="flex items-center gap-3 flex-1 min-w-0">
+                            <input type="checkbox" 
+                                   class="custom-checkbox" 
+                                   ${isSelected ? 'checked' : ''} 
+                                   ${isDisabled ? 'disabled' : ''}
+                                   onclick="event.stopPropagation()"
+                                   onchange="toggleService('${service.id}')">
+                            <div class="flex-1 min-w-0">
+                                <div class="flex items-center flex-wrap gap-1">
+                                    <h3 class="text-white font-semibold text-sm truncate">${service.name}</h3>
+                                    ${badges}
+                                </div>
+                                <p class="text-white/60 text-xs truncate">${service.description}</p>
+                            </div>
+                        </div>
+                        <div class="price-tag rounded-md px-3 py-1.5 ml-2 shrink-0">
+                            <span class="text-white font-bold text-sm">₱${service.price.toLocaleString()}</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function isServiceDisabled(service) {
+            // Check if a bundle includes this service (making individual addon disabled)
+            if (service.category === 'addon') {
+                const activeBundles = services.filter(s => s.category === 'bundle' && selectedServices.has(s.id));
+                for (let bundle of activeBundles) {
+                    if (bundle.includes && bundle.includes.includes(service.id)) {
+                        return true;
+                    }
+                }
+            }
+            
+            // Check maintenance conflicts
+            if (service.conflicts) {
+                for (let conflictId of service.conflicts) {
+                    if (selectedServices.has(conflictId)) return true;
+                }
+            }
+            
+            // Check if conflicting maintenance is selected
+            if (service.id === 'maint_backend' && selectedServices.has('maint_full')) return true;
+            if (service.id === 'maint_frontend' && selectedServices.has('maint_full')) return true;
+            
+            return false;
+        }
+
+        function toggleService(id) {
+            const service = services.find(s => s.id === id);
+            
+            if (selectedServices.has(id)) {
+                selectedServices.delete(id);
+                
+                // If unchecking a bundle, restore individual addons if they were selected before
+                if (service.category === 'bundle' && service.includes) {
+                    // Don't auto-restore, let user decide
+                }
+            } else {
+                selectedServices.add(id);
+                
+                // If selecting a bundle, we keep the bundle price (addons included are "free" in bundle)
+                // If selecting full maintenance, uncheck individual ones
+                if (service.conflicts) {
+                    service.conflicts.forEach(conflictId => selectedServices.delete(conflictId));
+                }
+            }
+            
+            updateUI();
+        }
+
+        function updateUI() {
+            renderServices();
+            
+            // Calculate total - bundles include their addons but we only count bundle price
+            let total = 0;
+            const countedServices = new Set();
+            
+            // First, add all selected services that aren't disabled
+            for (let id of selectedServices) {
+                const service = services.find(s => s.id === id);
+                if (!service || isServiceDisabled(service)) continue;
+                
+                if (service.category === 'bundle') {
+                    total += service.price;
+                    // Mark included services as counted (so they don't add extra)
+                    if (service.includes) {
+                        service.includes.forEach(includedId => countedServices.add(includedId));
+                    }
+                } else if (!countedServices.has(id)) {
+                    total += service.price;
+                }
+            }
+            
+            // Animate total
+            const currentTotal = parseInt(document.getElementById('totalAmount').innerText.replace(/,/g, ''));
+            animateValue(document.getElementById('totalAmount'), currentTotal, total, 300);
+            
+            // Update count (only count non-disabled services)
+            let count = 0;
+            for (let id of selectedServices) {
+                const service = services.find(s => s.id === id);
+                if (service && !isServiceDisabled(service)) count++;
+            }
+            document.getElementById('itemCount').textContent = `${count} item${count !== 1 ? 's' : ''} selected`;
+            
+            // Update summary
+            const summaryDiv = document.getElementById('selectedSummary');
+            const itemsDiv = document.getElementById('selectedItems');
+            
+            if (count > 0) {
+                summaryDiv.classList.remove('hidden');
+                const selectedList = [];
+                
+                for (let id of selectedServices) {
+                    const service = services.find(s => s.id === id);
+                    if (!service || isServiceDisabled(service)) continue;
+                    
+                    let price = service.price;
+                    let note = '';
+                    
+                    if (service.category === 'bundle' && service.includes) {
+                        note = ` (includes ${service.includes.length} technologies)`;
+                    }
+                    
+                    selectedList.push({ name: service.name, price, note });
+                }
+                
+                itemsDiv.innerHTML = selectedList.map(s => `
+                    <div class="flex justify-between items-center py-1 border-b border-white/10 last:border-0">
+                        <span class="truncate mr-2">${s.name}${s.note}</span>
+                        <span class="font-mono font-semibold shrink-0">₱${s.price.toLocaleString()}</span>
+                    </div>
+                `).join('');
+            } else {
+                summaryDiv.classList.add('hidden');
+            }
+        }
+
+        function animateValue(obj, start, end, duration) {
+            if (start === end) return;
+            let startTimestamp = null;
+            const step = (timestamp) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                const value = Math.floor(progress * (end - start) + start);
+                obj.innerHTML = value.toLocaleString();
+                if (progress < 1) {
+                    window.requestAnimationFrame(step);
+                }
+            };
+            window.requestAnimationFrame(step);
+        }
+
+        function generateInvoice() {
+            const activeServices = [];
+            for (let id of selectedServices) {
+                const service = services.find(s => s.id === id);
+                if (service && !isServiceDisabled(service)) {
+                    activeServices.push(service);
+                }
+            }
+            
+            if (activeServices.length === 0) {
+                const btn = document.querySelector('button');
+                btn.style.animation = 'shake 0.5s';
+                setTimeout(() => btn.style.animation = '', 500);
+                return;
+            }
+            
+            const total = activeServices.reduce((sum, s) => sum + s.price, 0);
+            const details = activeServices.map(s => `• ${s.name}: ₱${s.price.toLocaleString()}`).join('\n');
+            
+            alert(`Invoice Generated!\n\n${details}\n\nTotal: ₱${total.toLocaleString()}\n\nThank you for your business!`);
+        }
+
+        // Add shake animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes shake {
+                0%, 100% { transform: translateX(0); }
+                25% { transform: translateX(-10px); }
+                75% { transform: translateX(10px); }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Initial render
+        updateUI();
+    </script>
+</body>
+</html>
