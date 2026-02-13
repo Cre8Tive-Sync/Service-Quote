@@ -269,9 +269,12 @@
     <main class="glass-panel rounded-3xl p-6 w-full max-w-2xl relative z-10">
 
         <!-- Header -->
-        <header class="mb-3 text-center">
-            <h1 class="text-2xl font-bold text-white mb-1 tracking-tight">Service Quote</h1>
-            <p class="text-white/70 text-xs font-medium tracking-wide uppercase">Select services for your project</p>
+        <header class="mb-3 relative">
+            <img src="light.png" alt="Logo" class="absolute top-0 left-0 h-12 w-auto">
+            <div class="text-center">
+                <h1 class="text-2xl font-bold text-white mb-1 tracking-tight">Service Quote</h1>
+                <p class="text-white/70 text-xs font-medium tracking-wide uppercase">Select services for your project</p>
+            </div>
         </header>
 
         <!-- Scrollable Services List -->
@@ -600,6 +603,17 @@
         }
 
         let invoiceBlob = null;
+        let logoImage = null;
+
+        // Preload logo for invoice
+        function preloadLogo() {
+            const img = new Image();
+            img.src = 'dark.png';
+            img.onload = () => {
+                logoImage = img;
+            };
+        }
+        preloadLogo();
 
         function generateInvoice() {
             const activeServices = [];
@@ -639,14 +653,22 @@
             ctx.fillStyle = '#ffffff';
             ctx.fillRect(0, 0, width, height);
 
-            // Header
+            // Draw logo centered at the top if loaded
+            if (logoImage) {
+                const logoHeight = 50;
+                const logoWidth = (logoImage.width / logoImage.height) * logoHeight;
+                const logoX = (width - logoWidth) / 2;
+                ctx.drawImage(logoImage, logoX, padding - 10, logoWidth, logoHeight);
+            }
+
+            // Header text - at normal position
             ctx.fillStyle = '#000000';
             ctx.font = 'bold 32px Inter, sans-serif';
             ctx.fillText('SERVICE QUOTE', padding, padding + 40);
 
             ctx.fillStyle = '#666666';
             ctx.font = '16px Inter, sans-serif';
-            ctx.fillText('Cre8tive Sync', padding, padding + 70);
+            ctx.fillText('Creative Sync', padding, padding + 70);
             ctx.fillText(new Date().toLocaleDateString(), width - padding - 150, padding + 70);
 
             // Line separator
