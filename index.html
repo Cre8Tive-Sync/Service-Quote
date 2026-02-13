@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -38,7 +39,7 @@
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.3);
-            box-shadow: 
+            box-shadow:
                 0 8px 32px 0 rgba(31, 38, 135, 0.2),
                 inset 0 0 0 1px rgba(255, 255, 255, 0.1);
         }
@@ -60,7 +61,7 @@
         .glass-card.selected {
             background: rgba(255, 255, 255, 0.35);
             border-color: rgba(255, 255, 255, 0.6);
-            box-shadow: 
+            box-shadow:
                 0 0 20px rgba(255, 255, 255, 0.3),
                 inset 0 0 0 1px rgba(255, 255, 255, 0.4);
         }
@@ -119,15 +120,65 @@
         }
 
         @keyframes float {
-            0%, 100% { transform: translate(0, 0) scale(1); }
-            33% { transform: translate(30px, -50px) scale(1.1); }
-            66% { transform: translate(-20px, 20px) scale(0.9); }
+
+            0%,
+            100% {
+                transform: translate(0, 0) scale(1);
+            }
+
+            33% {
+                transform: translate(30px, -50px) scale(1.1);
+            }
+
+            66% {
+                transform: translate(-20px, 20px) scale(0.9);
+            }
         }
 
         .price-tag {
             background: rgba(255, 255, 255, 0.25);
             backdrop-filter: blur(4px);
             border: 1px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .price-tag-bundle {
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.4), rgba(16, 185, 129, 0.3));
+            backdrop-filter: blur(4px);
+            border: 2px solid rgba(34, 197, 94, 0.6);
+            box-shadow: 0 0 20px rgba(34, 197, 94, 0.4), inset 0 0 20px rgba(255, 255, 255, 0.1);
+            animation: pricePulse 2s ease-in-out infinite;
+        }
+
+        .price-tag-bundle .price-text {
+            color: #ffffff !important;
+            text-shadow: 0 0 10px rgba(34, 197, 94, 0.8);
+            font-size: 1.1rem !important;
+        }
+
+        .price-tag-addon {
+            background: rgba(147, 197, 253, 0.2);
+            border: 1px solid rgba(147, 197, 253, 0.4);
+        }
+
+        .price-tag-maintenance {
+            background: rgba(196, 181, 253, 0.2);
+            border: 1px solid rgba(196, 181, 253, 0.4);
+        }
+
+        @keyframes pricePulse {
+            0%, 100% {
+                transform: scale(1);
+                box-shadow: 0 0 20px rgba(34, 197, 94, 0.4), inset 0 0 20px rgba(255, 255, 255, 0.1);
+            }
+            50% {
+                transform: scale(1.05);
+                box-shadow: 0 0 30px rgba(34, 197, 94, 0.6), inset 0 0 30px rgba(255, 255, 255, 0.2);
+            }
+        }
+
+        .service-item:hover .price-tag-bundle {
+            box-shadow: 0 0 30px rgba(34, 197, 94, 0.6), inset 0 0 30px rgba(255, 255, 255, 0.2);
         }
 
         .service-item {
@@ -141,7 +192,7 @@
         }
 
         .bundle-badge {
-            background: linear-gradient(135deg, rgba(255,255,255,0.3), rgba(255,255,255,0.1));
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.1));
             font-size: 0.65rem;
             letter-spacing: 0.05em;
         }
@@ -162,7 +213,7 @@
 
         .divider-glass {
             height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
         }
 
         .compact-row {
@@ -173,7 +224,7 @@
             max-height: 45vh;
             overflow-y: auto;
             scrollbar-width: thin;
-            scrollbar-color: rgba(255,255,255,0.3) transparent;
+            scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
         }
 
         .scroll-container::-webkit-scrollbar {
@@ -185,13 +236,13 @@
         }
 
         .scroll-container::-webkit-scrollbar-thumb {
-            background-color: rgba(255,255,255,0.3);
+            background-color: rgba(255, 255, 255, 0.3);
             border-radius: 3px;
         }
 
         .selected-scroll {
             scrollbar-width: thin;
-            scrollbar-color: rgba(255,255,255,0.3) transparent;
+            scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
         }
 
         .selected-scroll::-webkit-scrollbar {
@@ -203,16 +254,17 @@
         }
 
         .selected-scroll::-webkit-scrollbar-thumb {
-            background-color: rgba(255,255,255,0.3);
+            background-color: rgba(255, 255, 255, 0.3);
             border-radius: 3px;
         }
     </style>
 </head>
+
 <body class="flex items-center justify-center p-4 relative">
 
     <!-- Main Glass Container -->
-    <main class="glass-panel rounded-3xl p-6 w-full max-w-5xl relative z-10">
-        
+    <main class="glass-panel rounded-3xl p-6 w-full max-w-2xl relative z-10">
+
         <!-- Header -->
         <header class="mb-3 text-center">
             <h1 class="text-2xl font-bold text-white mb-1 tracking-tight">Service Quote</h1>
@@ -221,7 +273,7 @@
 
         <!-- Scrollable Services List -->
         <div class="scroll-container space-y-3 mb-3 pr-2">
-            
+
             <!-- Core Services -->
             <div>
                 <div class="section-header px-3 py-2 rounded-r-lg mb-2">
@@ -249,7 +301,8 @@
             <!-- Maintenance -->
             <div>
                 <div class="section-header px-3 py-2 rounded-r-lg mb-2">
-                    <h3 class="text-white/90 text-xs font-bold uppercase tracking-wider">Monthly Maintenance (Optional)</h3>
+                    <h3 class="text-white/90 text-xs font-bold uppercase tracking-wider">Monthly Maintenance (Optional)
+                    </h3>
                 </div>
                 <div class="space-y-2" id="maintenanceServices"></div>
             </div>
@@ -261,7 +314,8 @@
         <!-- Selected Items Summary -->
         <div id="selectedSummary" class="mb-4 hidden">
             <h3 class="text-white/80 text-xs font-semibold uppercase tracking-wider mb-2">Selected Services</h3>
-            <div id="selectedItems" class="selected-scroll space-y-1 text-xs text-white/90 max-h-40 overflow-y-auto pr-2"></div>
+            <div id="selectedItems"
+                class="selected-scroll space-y-1 text-xs text-white/90 max-h-40 overflow-y-auto pr-2"></div>
         </div>
 
         <!-- Total Section -->
@@ -277,14 +331,16 @@
         </div>
 
         <!-- Action Button -->
-        <button onclick="generateInvoice()" class="w-full mt-4 bg-white/20 hover:bg-white/30 text-white font-semibold py-3 rounded-xl border border-white/30 transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] backdrop-blur-sm text-sm">
+        <button onclick="generateInvoice()"
+            class="w-full mt-4 bg-white/20 hover:bg-white/30 text-white font-semibold py-3 rounded-xl border border-white/30 transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] backdrop-blur-sm text-sm">
             Generate Invoice
         </button>
 
     </main>
 
     <!-- Invoice Modal -->
-    <div id="invoiceModal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div id="invoiceModal"
+        class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
         <div class="glass-panel rounded-2xl p-6 max-w-2xl w-full">
             <div class="flex justify-between items-center mb-4">
                 <h2 class="text-white text-xl font-bold">Invoice Generated</h2>
@@ -294,10 +350,12 @@
                 <canvas id="invoiceCanvas" class="w-full"></canvas>
             </div>
             <div class="flex gap-3">
-                <button onclick="downloadInvoice()" class="flex-1 bg-white/20 hover:bg-white/30 text-white font-semibold py-3 rounded-xl border border-white/30 transition-all">
+                <button onclick="downloadInvoice()"
+                    class="flex-1 bg-white/20 hover:bg-white/30 text-white font-semibold py-3 rounded-xl border border-white/30 transition-all">
                     Download Image
                 </button>
-                <button onclick="copyToClipboard()" class="flex-1 bg-white/20 hover:bg-white/30 text-white font-semibold py-3 rounded-xl border border-white/30 transition-all">
+                <button onclick="copyToClipboard()"
+                    class="flex-1 bg-white/20 hover:bg-white/30 text-white font-semibold py-3 rounded-xl border border-white/30 transition-all">
                     Copy to Clipboard
                 </button>
             </div>
@@ -311,29 +369,44 @@
             // Core Services
             { id: 'web', name: "Web Development", price: 12000, category: 'core', description: "Base Price" },
             { id: 'mobile', name: "Mobile Development", price: 15000, category: 'core', description: "Base Price" },
+            { id: 'iot', name: "IoT Solutions", price: 8999, category: 'core', description: "Internet of Things integration (Subject to Change)" },
             { id: 'manuscript', name: "Manuscript Writing", price: 4999, category: 'core', description: "Technical documentation" },
             { id: 'consult', name: "Technical Consultations", price: 1999, category: 'core', description: "Expert guidance", default: true },
-            
+            { id: 'pitchdeck', name: "Pitch Deck Design", price: 6599, category: 'core', description: "Professional pitch decks" },
+            { id: 'slides', name: "Slide Design", price: 4500, category: 'core', description: "Professional slide decks" },
+
             // Add-ons
             { id: 'data', name: "Data Analytics", price: 2500, category: 'addon', description: "Business intelligence" },
             { id: 'ai', name: "Artificial Intelligence", price: 3999, category: 'addon', description: "ML & AI integration" },
             { id: 'ar', name: "Augmented Reality", price: 4599, category: 'addon', description: "AR experiences" },
             { id: 'vr', name: "Virtual Reality", price: 4599, category: 'addon', description: "VR development" },
             { id: 'cv', name: "Computer Vision", price: 6500, category: 'addon', description: "Image recognition" },
-            
+
             // Bundles
-            { id: 'master', name: "Master of Emerging Tech", price: 7599, category: 'bundle', description: "All emerging tech included", 
-              includes: ['data', 'ai', 'ar', 'vr', 'cv'], savings: "Save ₱14,598" },
-            { id: 'aipack', name: "AI Pack", price: 5999, category: 'bundle', description: "Data + AI + Vision", 
-              includes: ['data', 'ai', 'cv'], savings: "Save ₱7,000" },
-            { id: 'virtualpack', name: "Virtual Pack", price: 5999, category: 'bundle', description: "VR + AR combined", 
-              includes: ['vr', 'ar'], savings: "Save ₱3,199" },
-            
+            {
+                id: 'master', name: "Master of Emerging Tech", price: 9599, category: 'bundle', description: "All emerging tech included",
+                includes: ['data', 'ai', 'ar', 'vr', 'cv'], savings: "Save ₱14,598"
+            },
+            {
+                id: 'aipack', name: "AI Pack", price: 5999, category: 'bundle', description: "Data + AI + Vision",
+                includes: ['data', 'ai', 'cv'], savings: "Save ₱7,000"
+            },
+            {
+                id: 'virtualpack', name: "Virtual Pack", price: 5999, category: 'bundle', description: "VR + AR combined",
+                includes: ['vr', 'ar'], savings: "Save ₱3,199"
+            },
+            {
+                id: 'presentors', name: "The Presentors", price: 6599, category: 'bundle', description: "Pitch Deck + Slides combo",
+                includes: ['pitchdeck', 'slides'], savings: "Save ₱3,199"
+            },
+
             // Maintenance
             { id: 'maint_backend', name: "Backend Maintenance", price: 2500, category: 'maintenance', description: "Monthly backend support" },
             { id: 'maint_frontend', name: "Frontend Maintenance", price: 1000, category: 'maintenance', description: "Monthly frontend support" },
-            { id: 'maint_full', name: "Full Stack Maintenance", price: 3000, category: 'maintenance', description: "Complete maintenance", 
-              conflicts: ['maint_backend', 'maint_frontend'] }
+            {
+                id: 'maint_full', name: "Full Stack Maintenance", price: 3000, category: 'maintenance', description: "Complete maintenance",
+                conflicts: ['maint_backend', 'maint_frontend']
+            }
         ];
 
         let selectedServices = new Set(['consult']); // Default selected
@@ -349,16 +422,22 @@
         function renderCategory(category, containerId) {
             const container = document.getElementById(containerId);
             const categoryServices = services.filter(s => s.category === category);
-            
+
             container.innerHTML = categoryServices.map(service => {
                 const isSelected = selectedServices.has(service.id);
                 const isDisabled = isServiceDisabled(service);
                 const isDefault = service.default;
-                
+
                 let badges = '';
                 if (isDefault) badges += `<span class="default-badge px-2 py-0.5 rounded text-xs font-bold mr-2">DEFAULT</span>`;
                 if (service.savings) badges += `<span class="savings-badge px-2 py-0.5 rounded text-xs font-bold mr-2">${service.savings}</span>`;
                 if (service.includes) badges += `<span class="bundle-badge px-2 py-0.5 rounded text-white text-xs mr-2">BUNDLE</span>`;
+
+                // Determine price tag class based on category
+                let priceTagClass = 'price-tag';
+                if (category === 'bundle') priceTagClass = 'price-tag-bundle';
+                else if (category === 'addon') priceTagClass = 'price-tag-addon';
+                else if (category === 'maintenance') priceTagClass = 'price-tag-maintenance';
 
                 return `
                     <div class="service-item glass-card rounded-lg compact-row flex items-center justify-between group ${isSelected ? 'selected' : ''} ${isDisabled ? 'disabled' : ''}" 
@@ -378,8 +457,8 @@
                                 <p class="text-white/60 text-xs truncate">${service.description}</p>
                             </div>
                         </div>
-                        <div class="price-tag rounded-md px-3 py-1.5 ml-2 shrink-0">
-                            <span class="text-white font-bold text-sm">₱${service.price.toLocaleString()}</span>
+                        <div class="${priceTagClass} rounded-md px-3 py-1.5 ml-2 shrink-0">
+                            <span class="price-text text-white font-bold text-sm">₱${service.price.toLocaleString()}</span>
                         </div>
                     </div>
                 `;
@@ -396,56 +475,56 @@
                     }
                 }
             }
-            
+
             // Check maintenance conflicts
             if (service.conflicts) {
                 for (let conflictId of service.conflicts) {
                     if (selectedServices.has(conflictId)) return true;
                 }
             }
-            
+
             // Check if conflicting maintenance is selected
             if (service.id === 'maint_backend' && selectedServices.has('maint_full')) return true;
             if (service.id === 'maint_frontend' && selectedServices.has('maint_full')) return true;
-            
+
             return false;
         }
 
         function toggleService(id) {
             const service = services.find(s => s.id === id);
-            
+
             if (selectedServices.has(id)) {
                 selectedServices.delete(id);
-                
+
                 // If unchecking a bundle, restore individual addons if they were selected before
                 if (service.category === 'bundle' && service.includes) {
                     // Don't auto-restore, let user decide
                 }
             } else {
                 selectedServices.add(id);
-                
+
                 // If selecting a bundle, we keep the bundle price (addons included are "free" in bundle)
                 // If selecting full maintenance, uncheck individual ones
                 if (service.conflicts) {
                     service.conflicts.forEach(conflictId => selectedServices.delete(conflictId));
                 }
             }
-            
+
             updateUI();
         }
 
         function updateUI() {
             renderServices();
-            
+
             // Calculate total - bundles include their addons but we only count bundle price
             let total = 0;
             const countedServices = new Set();
-            
+
             // First, add all selected services that aren't disabled
             for (let id of selectedServices) {
                 const service = services.find(s => s.id === id);
                 if (!service || isServiceDisabled(service)) continue;
-                
+
                 if (service.category === 'bundle') {
                     total += service.price;
                     // Mark included services as counted (so they don't add extra)
@@ -456,11 +535,11 @@
                     total += service.price;
                 }
             }
-            
+
             // Animate total
             const currentTotal = parseInt(document.getElementById('totalAmount').innerText.replace(/,/g, ''));
             animateValue(document.getElementById('totalAmount'), currentTotal, total, 300);
-            
+
             // Update count (only count non-disabled services)
             let count = 0;
             for (let id of selectedServices) {
@@ -468,29 +547,29 @@
                 if (service && !isServiceDisabled(service)) count++;
             }
             document.getElementById('itemCount').textContent = `${count} item${count !== 1 ? 's' : ''} selected`;
-            
+
             // Update summary
             const summaryDiv = document.getElementById('selectedSummary');
             const itemsDiv = document.getElementById('selectedItems');
-            
+
             if (count > 0) {
                 summaryDiv.classList.remove('hidden');
                 const selectedList = [];
-                
+
                 for (let id of selectedServices) {
                     const service = services.find(s => s.id === id);
                     if (!service || isServiceDisabled(service)) continue;
-                    
+
                     let price = service.price;
                     let note = '';
-                    
+
                     if (service.category === 'bundle' && service.includes) {
                         note = ` (includes ${service.includes.length} technologies)`;
                     }
-                    
+
                     selectedList.push({ name: service.name, price, note });
                 }
-                
+
                 itemsDiv.innerHTML = selectedList.map(s => `
                     <div class="flex justify-between items-center py-1 border-b border-white/10 last:border-0">
                         <span class="truncate mr-2">${s.name}${s.note}</span>
@@ -527,20 +606,20 @@
                     activeServices.push(service);
                 }
             }
-            
+
             if (activeServices.length === 0) {
                 const btn = document.querySelector('button');
                 btn.style.animation = 'shake 0.5s';
                 setTimeout(() => btn.style.animation = '', 500);
                 return;
             }
-            
+
             const total = activeServices.reduce((sum, s) => sum + s.price, 0);
-            
+
             // Create canvas
             const canvas = document.getElementById('invoiceCanvas');
             const ctx = canvas.getContext('2d');
-            
+
             // Set canvas size
             const width = 800;
             const lineHeight = 35;
@@ -549,24 +628,24 @@
             const footerHeight = 100;
             const serviceHeight = activeServices.length * lineHeight;
             const height = headerHeight + serviceHeight + footerHeight + padding * 2;
-            
+
             canvas.width = width;
             canvas.height = height;
-            
+
             // Background
             ctx.fillStyle = '#ffffff';
             ctx.fillRect(0, 0, width, height);
-            
+
             // Header
             ctx.fillStyle = '#000000';
             ctx.font = 'bold 32px Inter, sans-serif';
             ctx.fillText('SERVICE QUOTE', padding, padding + 40);
-            
+
             ctx.fillStyle = '#666666';
             ctx.font = '16px Inter, sans-serif';
             ctx.fillText('Cre8tive Sync', padding, padding + 70);
             ctx.fillText(new Date().toLocaleDateString(), width - padding - 150, padding + 70);
-            
+
             // Line separator
             ctx.strokeStyle = '#e0e0e0';
             ctx.lineWidth = 2;
@@ -574,27 +653,27 @@
             ctx.moveTo(padding, headerHeight);
             ctx.lineTo(width - padding, headerHeight);
             ctx.stroke();
-            
+
             // Services
             let yPos = headerHeight + padding + 10;
             ctx.fillStyle = '#000000';
             ctx.font = '18px Inter, sans-serif';
-            
+
             activeServices.forEach((service, index) => {
                 // Service name
                 ctx.fillStyle = '#000000';
                 ctx.font = '18px Inter, sans-serif';
                 ctx.fillText(service.name, padding, yPos);
-                
+
                 // Price
                 ctx.font = 'bold 18px Inter, sans-serif';
                 const priceText = '₱' + service.price.toLocaleString();
                 const priceWidth = ctx.measureText(priceText).width;
                 ctx.fillText(priceText, width - padding - priceWidth, yPos);
-                
+
                 yPos += lineHeight;
             });
-            
+
             // Total line
             yPos += 20;
             ctx.strokeStyle = '#000000';
@@ -603,42 +682,42 @@
             ctx.moveTo(padding, yPos);
             ctx.lineTo(width - padding, yPos);
             ctx.stroke();
-            
+
             // Total
             yPos += 40;
             ctx.fillStyle = '#000000';
             ctx.font = 'bold 24px Inter, sans-serif';
             ctx.fillText('TOTAL ESTIMATE', padding, yPos);
-            
+
             ctx.font = 'bold 28px Inter, sans-serif';
             const totalText = '₱' + total.toLocaleString();
             const totalWidth = ctx.measureText(totalText).width;
             ctx.fillText(totalText, width - padding - totalWidth, yPos);
-            
+
             // Footer
             yPos += 50;
             ctx.fillStyle = '#999999';
             ctx.font = '14px Inter, sans-serif';
-            ctx.fillText('Thank you for your business!', padding, yPos);
-            
+            ctx.fillText('We wholeheartedly appreciate your trust in us!', padding, yPos);
+
             // Convert to blob and show modal
             canvas.toBlob(blob => {
                 invoiceBlob = blob;
                 document.getElementById('invoiceModal').classList.remove('hidden');
-                
+
                 // Try to auto-copy to clipboard
                 copyToClipboard(true);
             });
         }
-        
+
         function closeModal() {
             document.getElementById('invoiceModal').classList.add('hidden');
             document.getElementById('statusMessage').classList.add('hidden');
         }
-        
+
         function downloadInvoice() {
             if (!invoiceBlob) return;
-            
+
             const url = URL.createObjectURL(invoiceBlob);
             const a = document.createElement('a');
             a.href = url;
@@ -647,18 +726,18 @@
             a.click();
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
-            
+
             showStatus('Invoice downloaded successfully!', 'success');
         }
-        
+
         async function copyToClipboard(silent = false) {
             if (!invoiceBlob) return;
-            
+
             try {
                 await navigator.clipboard.write([
                     new ClipboardItem({ 'image/png': invoiceBlob })
                 ]);
-                
+
                 if (!silent) {
                     showStatus('Invoice copied to clipboard!', 'success');
                 }
@@ -668,13 +747,13 @@
                 }
             }
         }
-        
+
         function showStatus(message, type) {
             const statusEl = document.getElementById('statusMessage');
             statusEl.textContent = message;
             statusEl.classList.remove('hidden');
             statusEl.style.color = type === 'success' ? '#4ade80' : '#f87171';
-            
+
             setTimeout(() => {
                 statusEl.classList.add('hidden');
             }, 3000);
@@ -695,4 +774,5 @@
         updateUI();
     </script>
 </body>
+
 </html>
