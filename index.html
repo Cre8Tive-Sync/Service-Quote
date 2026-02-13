@@ -34,7 +34,7 @@
         }
 
         .glass-panel {
-            background: rgba(255, 255, 255, 0.15);
+            background: #ffffff0f;
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.3);
@@ -283,6 +283,28 @@
 
     </main>
 
+    <!-- Invoice Modal -->
+    <div id="invoiceModal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="glass-panel rounded-2xl p-6 max-w-2xl w-full">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-white text-xl font-bold">Invoice Generated</h2>
+                <button onclick="closeModal()" class="text-white/60 hover:text-white text-2xl">&times;</button>
+            </div>
+            <div class="bg-white rounded-lg p-4 mb-4">
+                <canvas id="invoiceCanvas" class="w-full"></canvas>
+            </div>
+            <div class="flex gap-3">
+                <button onclick="downloadInvoice()" class="flex-1 bg-white/20 hover:bg-white/30 text-white font-semibold py-3 rounded-xl border border-white/30 transition-all">
+                    Download Image
+                </button>
+                <button onclick="copyToClipboard()" class="flex-1 bg-white/20 hover:bg-white/30 text-white font-semibold py-3 rounded-xl border border-white/30 transition-all">
+                    Copy to Clipboard
+                </button>
+            </div>
+            <p id="statusMessage" class="text-center text-white/70 text-sm mt-3 hidden"></p>
+        </div>
+    </div>
+
     <script>
         // Service definitions with categories and conflicts
         const services = [
@@ -495,6 +517,8 @@
             window.requestAnimationFrame(step);
         }
 
+        let invoiceBlob = null;
+
         function generateInvoice() {
             const activeServices = [];
             for (let id of selectedServices) {
@@ -512,9 +536,148 @@
             }
             
             const total = activeServices.reduce((sum, s) => sum + s.price, 0);
-            const details = activeServices.map(s => `• ${s.name}: ₱${s.price.toLocaleString()}`).join('\n');
             
-            alert(`Invoice Generated!\n\n${details}\n\nTotal: ₱${total.toLocaleString()}\n\nThank you for your business!`);
+            // Create canvas
+            const canvas = document.getElementById('invoiceCanvas');
+            const ctx = canvas.getContext('2d');
+            
+            // Set canvas size
+            const width = 800;
+            const lineHeight = 35;
+            const padding = 40;
+            const headerHeight = 120;
+            const footerHeight = 100;
+            const serviceHeight = activeServices.length * lineHeight;
+            const height = headerHeight + serviceHeight + footerHeight + padding * 2;
+            
+            canvas.width = width;
+            canvas.height = height;
+            
+            // Background
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, width, height);
+            
+            // Header
+            ctx.fillStyle = '#000000';
+            ctx.font = 'bold 32px Inter, sans-serif';
+            ctx.fillText('SERVICE QUOTE', padding, padding + 40);
+            
+            ctx.fillStyle = '#666666';
+            ctx.font = '16px Inter, sans-serif';
+            ctx.fillText('Cre8tive Sync', padding, padding + 70);
+            ctx.fillText(new Date().toLocaleDateString(), width - padding - 150, padding + 70);
+            
+            // Line separator
+            ctx.strokeStyle = '#e0e0e0';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(padding, headerHeight);
+            ctx.lineTo(width - padding, headerHeight);
+            ctx.stroke();
+            
+            // Services
+            let yPos = headerHeight + padding + 10;
+            ctx.fillStyle = '#000000';
+            ctx.font = '18px Inter, sans-serif';
+            
+            activeServices.forEach((service, index) => {
+                // Service name
+                ctx.fillStyle = '#000000';
+                ctx.font = '18px Inter, sans-serif';
+                ctx.fillText(service.name, padding, yPos);
+                
+                // Price
+                ctx.font = 'bold 18px Inter, sans-serif';
+                const priceText = '₱' + service.price.toLocaleString();
+                const priceWidth = ctx.measureText(priceText).width;
+                ctx.fillText(priceText, width - padding - priceWidth, yPos);
+                
+                yPos += lineHeight;
+            });
+            
+            // Total line
+            yPos += 20;
+            ctx.strokeStyle = '#000000';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(padding, yPos);
+            ctx.lineTo(width - padding, yPos);
+            ctx.stroke();
+            
+            // Total
+            yPos += 40;
+            ctx.fillStyle = '#000000';
+            ctx.font = 'bold 24px Inter, sans-serif';
+            ctx.fillText('TOTAL ESTIMATE', padding, yPos);
+            
+            ctx.font = 'bold 28px Inter, sans-serif';
+            const totalText = '₱' + total.toLocaleString();
+            const totalWidth = ctx.measureText(totalText).width;
+            ctx.fillText(totalText, width - padding - totalWidth, yPos);
+            
+            // Footer
+            yPos += 50;
+            ctx.fillStyle = '#999999';
+            ctx.font = '14px Inter, sans-serif';
+            ctx.fillText('Thank you for your business!', padding, yPos);
+            
+            // Convert to blob and show modal
+            canvas.toBlob(blob => {
+                invoiceBlob = blob;
+                document.getElementById('invoiceModal').classList.remove('hidden');
+                
+                // Try to auto-copy to clipboard
+                copyToClipboard(true);
+            });
+        }
+        
+        function closeModal() {
+            document.getElementById('invoiceModal').classList.add('hidden');
+            document.getElementById('statusMessage').classList.add('hidden');
+        }
+        
+        function downloadInvoice() {
+            if (!invoiceBlob) return;
+            
+            const url = URL.createObjectURL(invoiceBlob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `invoice-${Date.now()}.png`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showStatus('Invoice downloaded successfully!', 'success');
+        }
+        
+        async function copyToClipboard(silent = false) {
+            if (!invoiceBlob) return;
+            
+            try {
+                await navigator.clipboard.write([
+                    new ClipboardItem({ 'image/png': invoiceBlob })
+                ]);
+                
+                if (!silent) {
+                    showStatus('Invoice copied to clipboard!', 'success');
+                }
+            } catch (err) {
+                if (!silent) {
+                    showStatus('Could not copy to clipboard. Please use download button.', 'error');
+                }
+            }
+        }
+        
+        function showStatus(message, type) {
+            const statusEl = document.getElementById('statusMessage');
+            statusEl.textContent = message;
+            statusEl.classList.remove('hidden');
+            statusEl.style.color = type === 'success' ? '#4ade80' : '#f87171';
+            
+            setTimeout(() => {
+                statusEl.classList.add('hidden');
+            }, 3000);
         }
 
         // Add shake animation
